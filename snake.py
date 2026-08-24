@@ -1,4 +1,4 @@
-# Snakes and Ladders -v2.2
+# Snakes and Ladders -v2.1
 # please install -.-> pip install termcolor
 
 
@@ -17,7 +17,7 @@ class Player:
         self.number = Player.players_numbers
         Player.players_numbers += 1
         self.color = clr
-        self.useable_colors.remove(clr)
+        Player.useable_colors.remove(clr)
         self.place = plc
 
     def move(self, num: "int"):
@@ -100,7 +100,7 @@ ladder_places = [n.place for n in ladders]
 board = [i for i in range(1, 101)]
 
 
-def board_print_2_pp(board: list["int"], pl1: Player, pl2: Player):
+def print_board_2(board: list["int"], pl1: Player, pl2: Player):
     print()
     for n in board:
         if n in snakes_places:
@@ -119,28 +119,6 @@ def board_print_2_pp(board: list["int"], pl1: Player, pl2: Player):
         if n % 10 == 0:
             print()
     print()
-
-
-# def board_print_2(board: list["int"], pl1: Player, bot: Bot):
-#     print(colored(f"player is {pl1.color}\tBot is {bot.color}", "red"))
-#     print()
-#     for n in board:
-#         if n in snakes_places:
-#             print(colored("[S]", "green", attrs=["italic"]), end="")
-#         elif n in ladder_places:
-#             print(colored("[L]", "yellow", attrs=["italic"]), end="")
-#         elif n == pl1.place:
-#             print(colored(f"[{pl1.number}]", pl1.color, attrs=["bold"]), end="")
-#         elif n == bot.place:
-#             print(colored(f"[{bot.number}]", bot.color, attrs=["bold"]), end="")
-#         else:
-#             if n % 10 == n:
-#                 print(f"[0{n}]", end="")
-#             else:
-#                 print(f"[{n}]", end="")
-#         if n % 10 == 0:
-#             print()
-#     print()
 
 
 win = False
@@ -192,21 +170,18 @@ match game_mode:
         players_color = colors[int(color) - 1]
         player1 = Player(players_color, 0)
         bot1 = Bot(0)
-        # board_print_2(board, player1, bot1)
-        board_print_2_pp(board, player1, bot1)
+        print_board_2(board, player1, bot1)
 
         while True:
             play(player1)
             if win:
                 break
-            # board_print_2(board, player1, bot1)
-            board_print_2_pp(board, player1, bot1)
+            print_board_2(board, player1, bot1)
             input("Please press enter to continue ...")
             play(bot1)
             if win:
                 break
-            # board_print_2(board, player1, bot1)
-            board_print_2_pp(board, player1, bot1)
+            print_board_2(board, player1, bot1)
     case 2:
         print("Welcom , Please select your color player1 with number 1,2,3,4...")
         colors = ["blue", "green", "magenta", "red"]
@@ -220,16 +195,16 @@ match game_mode:
         color2 = input("Enter your number -> ")
         players_color2 = colors[int(color2) - 1]
         player2 = Player(players_color2)
-        board_print_2_pp(board, player1, player2)
+        print_board_2(board, player1, player2)
         while True:
             play(player1)
             if win:
                 break
-            board_print_2_pp(board, player1, player2)
+            print_board_2(board, player1, player2)
             play(player2)
             if win:
                 break
-            board_print_2_pp(board, player1, player2)
+            print_board_2(board, player1, player2)
     case _:
         print("goodby")
         sleep(1)
