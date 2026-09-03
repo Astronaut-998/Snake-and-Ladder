@@ -1,4 +1,4 @@
-# Snakes and Ladders -v2.1
+# Snakes and Ladders -v2.2
 # please install -.-> pip install termcolor
 
 
@@ -101,6 +101,8 @@ board = [i for i in range(1, 101)]
 
 
 def print_board_2(board: list["int"], pl1: Player, pl2: Player):
+    print("Player1: ",colored(f"{pl1.place}", pl1.color, attrs=["bold"]), end=" "*4)
+    print("Player2: ",colored(f"{pl2.place}", pl2.color, attrs=["bold"]))
     print()
     for n in board:
         if n in snakes_places:
@@ -175,6 +177,7 @@ def color_choose(colors):
             break
         print("Please enter a NUMBER from the list above ...")
         system("cls" if name == "nt" else "clear")
+    system("cls" if name == "nt" else "clear")
     return color
 
 

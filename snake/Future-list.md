@@ -4,17 +4,17 @@
 
 ### \-v2.2
 
-* save
+
 * ~~two player in one place problem~~
 * ~~error choose color~~
-* edit print names on top of board
+* ~~edit print names on top of board~~
 
 
 
 
 
 ### \-v3
-
+* save
 * make graphics better
 * player vs player vs bot mode
 
