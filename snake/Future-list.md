@@ -6,7 +6,7 @@
 
 * save
 * ~~two player in one place problem~~
-* error choose color
+* ~~error choose color~~
 * edit print names on top of board
 
 

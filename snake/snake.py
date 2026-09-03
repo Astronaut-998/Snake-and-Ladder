@@ -158,6 +158,26 @@ def play(ply: Player):
         )
 
 
+def color_choose(colors):
+    while True:
+        i = 1
+        for clr in colors:
+            print(f"{i}:{clr}", end=" " * 4)
+            i += 1
+        print()
+        try:
+            color = int(input("Enter your number -> "))
+        except ValueError:
+            print("Please enter a NUMBER ...")
+            system("cls" if name == "nt" else "clear")
+            continue
+        if 0 < color < len(colors) + 1:
+            break
+        print("Please enter a NUMBER from the list above ...")
+        system("cls" if name == "nt" else "clear")
+    return color
+
+
 # Game
 game_mode = int(
     input(
@@ -167,14 +187,12 @@ game_mode = int(
 match game_mode:
     case 1:
         print("Welcom , Please select your color ...")
-        print("1: Blue    2: Green    3: Magenta    4: Red")
-        color = input("Enter your number -> ")
         colors = ["blue", "green", "magenta", "red"]
-        players_color = colors[int(color) - 1]
-        player1 = Player(players_color,0)
+        color = color_choose(colors)
+        players_color = colors[color - 1]
+        player1 = Player(players_color, 0)
         bot1 = Bot(0)
         print_board_2(board, player1, bot1)
-
         while True:
             play(player1)
             if win:
@@ -188,15 +206,14 @@ match game_mode:
     case 2:
         print("Welcom , Please select your color player1 with number 1,2,3,4...")
         colors = ["blue", "green", "magenta", "red"]
-        print(colors)
-        color1 = input("Enter your number -> ")
-        players_color1 = colors[int(color1) - 1]
+        color1 = color_choose(colors)
+        players_color1 = colors[color1 - 1]
         colors.remove(players_color1)
         player1 = Player(players_color1)
+        system("cls" if name == "nt" else "clear")
         print("Welcom , Please select your color player2 with number 1,2,3 ...")
-        print(colors)
-        color2 = input("Enter your number -> ")
-        players_color2 = colors[int(color2) - 1]
+        color2 = color_choose(colors)
+        players_color2 = colors[color2 - 1]
         player2 = Player(players_color2)
         print_board_2(board, player1, player2)
         while True:
