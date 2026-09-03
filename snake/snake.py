@@ -107,6 +107,9 @@ def print_board_2(board: list["int"], pl1: Player, pl2: Player):
             print(colored("[S]", "cyan", attrs=["italic"]), end="")
         elif n in ladder_places:
             print(colored("[L]", "yellow", attrs=["italic"]), end="")
+        elif n == pl1.place and n == pl2.place:
+            print(colored(f"[{pl1.number}", pl1.color, attrs=["bold"]), end="")
+            print(colored(f"{pl2.number}]", pl2.color, attrs=["bold"]), end="")
         elif n == pl1.place:
             print(colored(f"[{pl1.number}]", pl1.color, attrs=["bold"]), end="")
         elif n == pl2.place:
@@ -168,7 +171,7 @@ match game_mode:
         color = input("Enter your number -> ")
         colors = ["blue", "green", "magenta", "red"]
         players_color = colors[int(color) - 1]
-        player1 = Player(players_color, 0)
+        player1 = Player(players_color,0)
         bot1 = Bot(0)
         print_board_2(board, player1, bot1)
 
