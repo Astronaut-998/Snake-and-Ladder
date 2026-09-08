@@ -1,5 +1,4 @@
-# Snakes and Ladders -v2.2
-# please install -.-> pip install termcolor
+# Snakes and Ladders -v2.3
 
 
 from os import name, system
@@ -45,6 +44,9 @@ class Player:
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
                 f"your place is {self.place}",
             )
+
+    def clr_reset(self):
+        Player.useable_colors = ["blue", "green", "magenta", "red"]
 
 
 class Bot(Player):
@@ -99,28 +101,37 @@ snakes_places = [n.place for n in snakes]
 ladder_places = [n.place for n in ladders]
 board = [i for i in range(1, 101)]
 
+CELL_WIDTH = 3
+
+
+def _cell(text: str, color: "str | None" = None, attrs: "list | None" = None):
+    padded = f"{text:^{CELL_WIDTH}}"
+    content = colored(padded, color, attrs=attrs) if color else padded
+    return f"[{content}]"
+
 
 def print_board_2(board: list["int"], pl1: Player, pl2: Player):
-    print("Player1: ",colored(f"{pl1.place}", pl1.color, attrs=["bold"]), end=" "*4)
-    print("Player2: ",colored(f"{pl2.place}", pl2.color, attrs=["bold"]))
+    print("Player1: ", colored(f"{pl1.place}", pl1.color, attrs=["bold"]), end=" " * 4)
+    print("Player2: ", colored(f"{pl2.place}", pl2.color, attrs=["bold"]))
     print()
     for n in board:
         if n in snakes_places:
-            print(colored("[S]", "cyan", attrs=["italic"]), end="")
+            print(_cell("S", "cyan", ["italic"]), end="")
         elif n in ladder_places:
-            print(colored("[L]", "yellow", attrs=["italic"]), end="")
+            print(_cell("L", "yellow", ["italic"]), end="")
         elif n == pl1.place and n == pl2.place:
-            print(colored(f"[{pl1.number}", pl1.color, attrs=["bold"]), end="")
-            print(colored(f"{pl2.number}]", pl2.color, attrs=["bold"]), end="")
+            combined = f"{pl1.number}{pl2.number}"
+            padded = f"{combined:^{CELL_WIDTH}}"
+            mid = len(padded) // 2
+            left = colored(padded[:mid], pl1.color, attrs=["bold"])
+            right = colored(padded[mid:], pl2.color, attrs=["bold"])
+            print(f"[{left}{right}]", end="")
         elif n == pl1.place:
-            print(colored(f"[{pl1.number}]", pl1.color, attrs=["bold"]), end="")
+            print(_cell(str(pl1.number), pl1.color, ["bold"]), end="")
         elif n == pl2.place:
-            print(colored(f"[{pl2.number}]", pl2.color, attrs=["bold"]), end="")
+            print(_cell(str(pl2.number), pl2.color, ["bold"]), end="")
         else:
-            if n % 10 == n:
-                print(f"[0{n}]", end="")
-            else:
-                print(f"[{n}]", end="")
+            print(_cell(str(n)), end="")
         if n % 10 == 0:
             print()
     print()
@@ -182,54 +193,63 @@ def color_choose(colors):
 
 
 # Game
-game_mode = int(
-    input(
-        "Select game mod ...\n1. player vs bot \t 2. player vs player \t 3. Exit\n-> "
+while True:
+    game_mode = int(
+        input(
+            "Select game mod ...\n1. player vs bot \t 2. player vs player \t 3. Exit\n-> "
+        )
     )
-)
-match game_mode:
-    case 1:
-        print("Welcom , Please select your color ...")
-        colors = ["blue", "green", "magenta", "red"]
-        color = color_choose(colors)
-        players_color = colors[color - 1]
-        player1 = Player(players_color, 0)
-        bot1 = Bot(0)
-        print_board_2(board, player1, bot1)
-        while True:
-            play(player1)
-            if win:
-                break
+    match game_mode:
+        case 1:
+            print("Welcom , Please select your color ...")
+            colors = ["blue", "green", "magenta", "red"]
+            color = color_choose(colors)
+            players_color = colors[color - 1]
+            player1 = Player(players_color, 96)
+            bot1 = Bot(96)
             print_board_2(board, player1, bot1)
-            input("Please press enter to continue ...")
-            play(bot1)
-            if win:
-                break
-            print_board_2(board, player1, bot1)
-    case 2:
-        print("Welcom , Please select your color player1 with number 1,2,3,4...")
-        colors = ["blue", "green", "magenta", "red"]
-        color1 = color_choose(colors)
-        players_color1 = colors[color1 - 1]
-        colors.remove(players_color1)
-        player1 = Player(players_color1)
-        system("cls" if name == "nt" else "clear")
-        print("Welcom , Please select your color player2 with number 1,2,3 ...")
-        color2 = color_choose(colors)
-        players_color2 = colors[color2 - 1]
-        player2 = Player(players_color2)
-        print_board_2(board, player1, player2)
-        while True:
-            play(player1)
-            if win:
-                break
+            while True:
+                play(player1)
+                if win:
+                    break
+                print_board_2(board, player1, bot1)
+                input("Please press enter to continue ...")
+                play(bot1)
+                if win:
+                    break
+                print_board_2(board, player1, bot1)
+        case 2:
+            print("Welcom , Please select your color player1 with number 1,2,3,4...")
+            colors = ["blue", "green", "magenta", "red"]
+            color1 = color_choose(colors)
+            players_color1 = colors[color1 - 1]
+            colors.remove(players_color1)
+            player1 = Player(players_color1)
+            system("cls" if name == "nt" else "clear")
+            print("Welcom , Please select your color player2 with number 1,2,3 ...")
+            color2 = color_choose(colors)
+            players_color2 = colors[color2 - 1]
+            player2 = Player(players_color2)
             print_board_2(board, player1, player2)
-            play(player2)
-            if win:
-                break
-            print_board_2(board, player1, player2)
-    case _:
-        print("goodby")
-        sleep(1)
+            while True:
+                play(player1)
+                if win:
+                    break
+                print_board_2(board, player1, player2)
+                play(player2)
+                if win:
+                    break
+                print_board_2(board, player1, player2)
+        case _:
+            print("goodby")
+            sleep(1)
+            system("cls" if name == "nt" else "clear")
+    sleep(3)
+    restart = input("Do you wanna play again? (y/n) ")
+    if restart.lower() == "y":
+        win = False
+        continue
         system("cls" if name == "nt" else "clear")
-sleep(5)
+        player1.clr_reset()
+    else:
+        break
