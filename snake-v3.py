@@ -1,4 +1,4 @@
-# Snakes and Ladders -v2.3
+# Snakes and Ladders -v3.1
 
 
 from os import name, system
@@ -18,6 +18,7 @@ class Player:
         self.color = clr
         Player.useable_colors.remove(clr)
         self.place = plc
+        self.six = False
 
     def move(self, num: "int"):
         self.place += num
@@ -28,17 +29,29 @@ class Player:
     def dice(self):
         seed()
         self.new_dice = randrange(1, 7)
-        self.move(self.new_dice)
         sleep(1)
         system("cls" if name == "nt" else "clear")
-        if self.place <= 100:
+        if self.six == False and self.new_dice == 6:
+            print(
+                "Player",
+                colored(f"[{self.number}]", self.color, attrs=["bold"]),
+                "you roll a 6 and from now you can play!!!",
+            )
+            self.six = True
+        elif self.six == False:
+            print(
+                "Player",
+                colored(f"[{self.number}]", self.color, attrs=["bold"]),
+                "to start, you must roll a 6.",
+            )
+        elif self.place <= 100:
+            self.move(self.new_dice)
             print(
                 "Player",
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
                 f"Dice number is {self.new_dice} and new place is {self.place}",
             )
         else:
-            self.move_back(self.new_dice)
             print(
                 "Player",
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
@@ -56,6 +69,7 @@ class Bot(Player):
         self.number = Player.players_numbers
         Player.players_numbers += 1
         self.place = plc
+        self.six = False
 
 
 class Snake(Player):
@@ -104,7 +118,7 @@ board = [i for i in range(1, 101)]
 CELL_WIDTH = 3
 
 
-def _cell(text: str, color: "str | None" = None, attrs: "list | None" = None):
+def cell(text: str, color: "str | None" = None, attrs: "list | None" = None):
     padded = f"{text:^{CELL_WIDTH}}"
     content = colored(padded, color, attrs=attrs) if color else padded
     return f"[{content}]"
@@ -116,9 +130,9 @@ def print_board_2(board: list["int"], pl1: Player, pl2: Player):
     print()
     for n in board:
         if n in snakes_places:
-            print(_cell("S", "cyan", ["italic"]), end="")
+            print(cell("S", "cyan", ["italic"]), end="")
         elif n in ladder_places:
-            print(_cell("L", "yellow", ["italic"]), end="")
+            print(cell("L", "yellow", ["italic"]), end="")
         elif n == pl1.place and n == pl2.place:
             combined = f"{pl1.number}{pl2.number}"
             padded = f"{combined:^{CELL_WIDTH}}"
@@ -127,11 +141,11 @@ def print_board_2(board: list["int"], pl1: Player, pl2: Player):
             right = colored(padded[mid:], pl2.color, attrs=["bold"])
             print(f"[{left}{right}]", end="")
         elif n == pl1.place:
-            print(_cell(str(pl1.number), pl1.color, ["bold"]), end="")
+            print(cell(str(pl1.number), pl1.color, ["bold"]), end="")
         elif n == pl2.place:
-            print(_cell(str(pl2.number), pl2.color, ["bold"]), end="")
+            print(cell(str(pl2.number), pl2.color, ["bold"]), end="")
         else:
-            print(_cell(str(n)), end="")
+            print(cell(str(n)), end="")
         if n % 10 == 0:
             print()
     print()
@@ -205,8 +219,8 @@ while True:
             colors = ["blue", "green", "magenta", "red"]
             color = color_choose(colors)
             players_color = colors[color - 1]
-            player1 = Player(players_color, 96)
-            bot1 = Bot(96)
+            player1 = Player(players_color, 0)
+            bot1 = Bot(0)
             print_board_2(board, player1, bot1)
             while True:
                 play(player1)

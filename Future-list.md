@@ -17,4 +17,4 @@
 * ~~make graphics better~~
 * player vs player vs bot mode
 * ~~Play again~~
-* 6 number to enter to game
+* ~~To start, must roll a 6~~
