@@ -14,7 +14,7 @@
 
 
 ### \-v3
-* save
-* make graphics better
+* ~~make graphics better~~
 * player vs player vs bot mode
-
+* ~~Play again~~
+* 6 number to enter to game
