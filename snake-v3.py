@@ -12,13 +12,18 @@ class Player:
     useable_colors = ["blue", "green", "magenta", "red"]  # noqa: RUF012
     players_numbers = 1
 
-    def __init__(self, clr: "str" = "", plc: "int" = 0):
+    def __init__(
+        self,
+        six,
+        clr: "str" = "",
+        plc: "int" = 0,
+    ):
         self.number = Player.players_numbers
         Player.players_numbers += 1
         self.color = clr
         Player.useable_colors.remove(clr)
         self.place = plc
-        self.six = False
+        self.six = not six
 
     def move(self, num: "int"):
         self.place += num
@@ -63,13 +68,17 @@ class Player:
 
 
 class Bot(Player):
-    def __init__(self, plc: "int" = 0):
+    def __init__(
+        self,
+        six,
+        plc: "int" = 0,
+    ):
         self.color = choice(Player.useable_colors)
         self.useable_colors.remove(self.color)
         self.number = Player.players_numbers
         Player.players_numbers += 1
         self.place = plc
-        self.six = False
+        self.six = not six
 
 
 class Snake(Player):
@@ -206,11 +215,26 @@ def color_choose(colors):
     return color
 
 
+while True:
+    try:
+        hard_op = int(input("please select: \n1.Easy\n2.Hard\n"))
+        if 0 < hard_op < 3:
+            system("cls" if name == "nt" else "clear")
+            break
+        raise  # noqa: PLE0704
+    except:  # noqa: E722
+        print("Please Enter the correct number !!!")
+match hard_op:
+    case 1:
+        hard_mode = False
+    case 2:
+        hard_mode = True
+
 # Game
 while True:
     game_mode = int(
         input(
-            "Select game mod ...\n1. player vs bot \t 2. player vs player \t 3. Exit\n-> "
+            "Select game mode ...\n1. player vs bot \t 2. player vs player \t 3. Exit\n-> "
         )
     )
     match game_mode:
@@ -219,8 +243,8 @@ while True:
             colors = ["blue", "green", "magenta", "red"]
             color = color_choose(colors)
             players_color = colors[color - 1]
-            player1 = Player(players_color, 0)
-            bot1 = Bot(0)
+            player1 = Player(hard_mode, players_color)  # type: ignore
+            bot1 = Bot(hard_mode)  # type: ignore
             print_board_2(board, player1, bot1)
             while True:
                 play(player1)
@@ -238,12 +262,12 @@ while True:
             color1 = color_choose(colors)
             players_color1 = colors[color1 - 1]
             colors.remove(players_color1)
-            player1 = Player(players_color1)
+            player1 = Player(hard_mode, players_color1)  # type: ignore
             system("cls" if name == "nt" else "clear")
             print("Welcom , Please select your color player2 with number 1,2,3 ...")
             color2 = color_choose(colors)
             players_color2 = colors[color2 - 1]
-            player2 = Player(players_color2)
+            player2 = Player(hard_mode, players_color2)  # type: ignore
             print_board_2(board, player1, player2)
             while True:
                 play(player1)
@@ -267,3 +291,5 @@ while True:
         player1.clr_reset()
     else:
         break
+
+# save -> game-mode + places -> json
