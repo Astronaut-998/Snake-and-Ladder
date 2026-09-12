@@ -1,4 +1,4 @@
-# Snakes and Ladders -v3.1
+# Snakes and Ladders -v3.2
 
 
 from os import name, system
@@ -14,7 +14,7 @@ class Player:
 
     def __init__(
         self,
-        six,
+        difficult,
         clr: "str" = "",
         plc: "int" = 0,
     ):
@@ -23,7 +23,7 @@ class Player:
         self.color = clr
         Player.useable_colors.remove(clr)
         self.place = plc
-        self.six = not six
+        self.six = not difficult
 
     def move(self, num: "int"):
         self.place += num
@@ -40,21 +40,21 @@ class Player:
             print(
                 "Player",
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
-                "you roll a 6 and from now you can play!!!",
+                "you rolled a 6 and from now you can play!!!",
             )
             self.six = True
         elif self.six == False:
             print(
                 "Player",
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
-                "to start, you must roll a 6.",
+                "To start, you have to roll a 6.",
             )
         elif self.place <= 100:
             self.move(self.new_dice)
             print(
                 "Player",
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
-                f"Dice number is {self.new_dice} and new place is {self.place}",
+                f"Dice number is {self.new_dice} and your new place is {self.place}",
             )
         else:
             print(
@@ -64,7 +64,7 @@ class Player:
             )
 
     def clr_reset(self):
-        Player.useable_colors = ["blue", "green", "magenta", "red"]
+        Player.useable_colors = ["Blue", "Green", "Magenta", "Red"]
 
 
 class Bot(Player):
@@ -124,6 +124,8 @@ snakes_places = [n.place for n in snakes]
 ladder_places = [n.place for n in ladders]
 board = [i for i in range(1, 101)]
 
+
+# claude ai
 CELL_WIDTH = 3
 
 
@@ -131,6 +133,9 @@ def cell(text: str, color: "str | None" = None, attrs: "list | None" = None):
     padded = f"{text:^{CELL_WIDTH}}"
     content = colored(padded, color, attrs=attrs) if color else padded
     return f"[{content}]"
+
+
+# _________
 
 
 def print_board_2(board: list["int"], pl1: Player, pl2: Player):
@@ -170,7 +175,7 @@ def play(ply: Player):
             colored(f"[{ply.number}]", ply.color, attrs=["bold"])
             + " it's your turn ..."
         )
-        input("Please press Enter key to Rolling the dice ... ")
+        input("Please press the Enter key to roll the dice ... ")
     ply.dice()
     if ply.place == 100:
         system("cls" if name == "nt" else "clear")
@@ -217,18 +222,20 @@ def color_choose(colors):
 
 while True:
     try:
-        hard_op = int(input("please select: \n1.Easy\n2.Hard\n"))
-        if 0 < hard_op < 3:
+        difficulty = int(
+            input("Please select the game's difficulty level: \n1.Easy\n2.Hard\n")
+        )
+        if 0 < difficulty < 3:
             system("cls" if name == "nt" else "clear")
             break
         raise  # noqa: PLE0704
     except:  # noqa: E722
         print("Please Enter the correct number !!!")
-match hard_op:
+match difficulty:
     case 1:
-        hard_mode = False
+        difficulty_mode = False
     case 2:
-        hard_mode = True
+        difficulty_mode = True
 
 # Game
 while True:
@@ -243,8 +250,8 @@ while True:
             colors = ["blue", "green", "magenta", "red"]
             color = color_choose(colors)
             players_color = colors[color - 1]
-            player1 = Player(hard_mode, players_color)  # type: ignore
-            bot1 = Bot(hard_mode)  # type: ignore
+            player1 = Player(difficulty_mode, players_color)  # type: ignore
+            bot1 = Bot(difficulty_mode)  # type: ignore
             print_board_2(board, player1, bot1)
             while True:
                 play(player1)
@@ -262,12 +269,14 @@ while True:
             color1 = color_choose(colors)
             players_color1 = colors[color1 - 1]
             colors.remove(players_color1)
-            player1 = Player(hard_mode, players_color1)  # type: ignore
+            player1 = Player(difficulty_mode, players_color1)  # type: ignore
             system("cls" if name == "nt" else "clear")
-            print("Welcom , Please select your color player2 with number 1,2,3 ...")
+            print(
+                "Welcom player2, Please indicate your color using the numbers 1, 2, and 3 ..."
+            )
             color2 = color_choose(colors)
             players_color2 = colors[color2 - 1]
-            player2 = Player(hard_mode, players_color2)  # type: ignore
+            player2 = Player(difficulty_mode, players_color2)  # type: ignore
             print_board_2(board, player1, player2)
             while True:
                 play(player1)
@@ -283,7 +292,7 @@ while True:
             sleep(1)
             system("cls" if name == "nt" else "clear")
     sleep(3)
-    restart = input("Do you wanna play again? (y/n) ")
+    restart = input("Do you want to play again?? (y/n) ")
     if restart.lower() == "y":
         win = False
         continue
