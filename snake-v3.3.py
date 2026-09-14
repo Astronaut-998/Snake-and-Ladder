@@ -1,4 +1,4 @@
-# Snakes and Ladders -v3.2
+# Snakes and Ladders -v3.3
 
 
 from os import name, system
@@ -23,7 +23,20 @@ class Player:
         self.color = clr
         Player.useable_colors.remove(clr)
         self.place = plc
-        self.six = not difficult
+        self.attack = False
+        self.crawl = False
+        match difficult:
+            case 1:
+                self.six = True
+            case 2:
+                self.six = False
+            case 3:
+                self.six = False
+                self.attack = True
+            case 4:
+                self.six = False
+                self.attack = True
+                self.crawl = True
 
     def move(self, num: "int"):
         self.place += num
@@ -70,7 +83,7 @@ class Player:
 class Bot(Player):
     def __init__(
         self,
-        six,
+        difficult,
         plc: "int" = 0,
     ):
         self.color = choice(Player.useable_colors)
@@ -78,7 +91,20 @@ class Bot(Player):
         self.number = Player.players_numbers
         Player.players_numbers += 1
         self.place = plc
-        self.six = not six
+        self.attack = False
+        self.crawl = False
+        match difficult:
+            case 1:
+                self.six = True
+            case 2:
+                self.six = False
+            case 3:
+                self.six = False
+                self.attack = True
+            case 4:
+                self.six = False
+                self.attack = True
+                self.crawl = True
 
 
 class Snake(Player):
@@ -168,7 +194,7 @@ def print_board_2(board: list["int"], pl1: Player, pl2: Player):
 win = False
 
 
-def play(ply: Player):
+def play(ply: Player, rival: Player):
     global win
     if ply.__class__.__name__ == "Player":
         print(
@@ -177,6 +203,15 @@ def play(ply: Player):
         )
         input("Please press the Enter key to roll the dice ... ")
     ply.dice()
+    if ply.attack == True and ply.place == rival.place:
+        rival.place = 0
+        print(
+            colored(
+                f"Player [{ply.number}] hit PLayer [{rival.number}] !!!",
+                "red",
+                attrs=["bold"],
+            )
+        )
     if ply.place == 100:
         system("cls" if name == "nt" else "clear")
         win = True
@@ -223,19 +258,16 @@ def color_choose(colors):
 while True:
     try:
         difficulty = int(
-            input("Please select the game's difficulty level: \n1.Easy\n2.Hard\n")
+            input(
+                "Please select the game's difficulty level: \n1.Easy\n2.Medium\n3.Hard\n4.Extremely Hard\n"
+            )
         )
-        if 0 < difficulty < 3:
+        if 0 < difficulty < 5:
             system("cls" if name == "nt" else "clear")
             break
         raise  # noqa: PLE0704
     except:  # noqa: E722
         print("Please Enter the correct number !!!")
-match difficulty:
-    case 1:
-        difficulty_mode = False
-    case 2:
-        difficulty_mode = True
 
 # Game
 while True:
@@ -250,16 +282,16 @@ while True:
             colors = ["blue", "green", "magenta", "red"]
             color = color_choose(colors)
             players_color = colors[color - 1]
-            player1 = Player(difficulty_mode, players_color)  # type: ignore
-            bot1 = Bot(difficulty_mode)  # type: ignore
+            player1 = Player(difficulty, players_color)  # type: ignore
+            bot1 = Bot(difficulty)  # type: ignore
             print_board_2(board, player1, bot1)
             while True:
-                play(player1)
+                play(player1, bot1)
                 if win:
                     break
                 print_board_2(board, player1, bot1)
                 input("Please press enter to continue ...")
-                play(bot1)
+                play(bot1, player1)
                 if win:
                     break
                 print_board_2(board, player1, bot1)
@@ -269,21 +301,21 @@ while True:
             color1 = color_choose(colors)
             players_color1 = colors[color1 - 1]
             colors.remove(players_color1)
-            player1 = Player(difficulty_mode, players_color1)  # type: ignore
+            player1 = Player(difficulty, players_color1)  # type: ignore
             system("cls" if name == "nt" else "clear")
             print(
                 "Welcom player2, Please indicate your color using the numbers 1, 2, and 3 ..."
             )
             color2 = color_choose(colors)
             players_color2 = colors[color2 - 1]
-            player2 = Player(difficulty_mode, players_color2)  # type: ignore
+            player2 = Player(difficulty, players_color2)  # type: ignore
             print_board_2(board, player1, player2)
             while True:
-                play(player1)
+                play(player1, player2)
                 if win:
                     break
                 print_board_2(board, player1, player2)
-                play(player2)
+                play(player2, player1)
                 if win:
                     break
                 print_board_2(board, player1, player2)
@@ -300,5 +332,3 @@ while True:
         player1.clr_reset()
     else:
         break
-
-# save -> game-mode + places -> json
