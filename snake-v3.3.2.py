@@ -62,22 +62,25 @@ class Player:
                 colored(f"[{self.number}]", self.color, attrs=["bold"]),
                 "To start, you have to roll a 6.",
             )
-        elif self.place <= 100:
-            self.move(self.new_dice)
-            print(
-                "Player",
-                colored(f"[{self.number}]", self.color, attrs=["bold"]),
-                f"Dice number is {self.new_dice} and your new place is {self.place}",
-            )
         else:
-            print(
-                "Player",
-                colored(f"[{self.number}]", self.color, attrs=["bold"]),
-                f"your place is {self.place}",
-            )
+            self.move(self.new_dice)
+            if self.place <= 100:
+                print(
+                    "Player",
+                    colored(f"[{self.number}]", self.color, attrs=["bold"]),
+                    f"Dice number is {self.new_dice} and your new place is {self.place}",
+                )
+            else:
+                self.move_back(self.new_dice)
+                print(
+                    "Player",
+                    colored(f"[{self.number}]", self.color, attrs=["bold"]),
+                    f"your place is {self.place}",
+                )
 
     def clr_reset(self):
-        Player.useable_colors = ["Blue", "Green", "Magenta", "Red"]
+        Player.useable_colors = ["blue", "green", "magenta", "red"]
+        Player.players_numbers = 1
 
 
 class Bot(Player):
@@ -107,7 +110,7 @@ class Bot(Player):
                 self.crawl = True
 
 
-class Snake(Player):
+class Snake:
     def __init__(self, sting_power, place):
         self.sting_power = sting_power * (-1)
         self.place = place
@@ -116,7 +119,7 @@ class Snake(Player):
         ply_name.move(self.sting_power)
 
 
-class Ladder(Player):
+class Ladder:
     def __init__(self, Lifting_power, place):
         self.Lifting_power = Lifting_power
         self.place = place
@@ -149,7 +152,6 @@ ladders = [lad1, lad2, lad3, lad4, lad5, lad6, lad7]
 snakes_places = [n.place for n in snakes]
 ladder_places = [n.place for n in ladders]
 board = [i for i in range(1, 101)]
-
 
 # claude ai
 CELL_WIDTH = 3
@@ -194,7 +196,7 @@ def print_board_2(board: list["int"], pl1: Player, pl2: Player):
 win = False
 
 
-def play(ply: Player, rival: Player):
+def play(ply: Player, rival: Player, difficulty):
     global win
     if ply.__class__.__name__ == "Player":
         print(
@@ -203,8 +205,10 @@ def play(ply: Player, rival: Player):
         )
         input("Please press the Enter key to roll the dice ... ")
     ply.dice()
-    if ply.attack == True and ply.place == rival.place:
+    if ply.place != 0 and ply.attack == True and ply.place == rival.place:
         rival.place = 0
+        if difficulty != 3:
+            rival.six = False
         print(
             colored(
                 f"Player [{ply.number}] hit PLayer [{rival.number}] !!!",
@@ -259,17 +263,18 @@ while True:
     try:
         difficulty = int(
             input(
-                "Please select the game's difficulty level: \n1.Easy\n2.Medium\n3.Hard\n4.Extremely Hard\n"
+                "Please select the game's difficulty level: \n1.Easy\n2.Medium\n3.Hard\n-> "
             )
         )
-        if 0 < difficulty < 5:
+        if 0 < difficulty < 4:
             system("cls" if name == "nt" else "clear")
             break
-        raise  # noqa: PLE0704
+        raise KeyboardInterrupt
     except:  # noqa: E722
         print("Please Enter the correct number !!!")
 
 # Game
+exit = False
 while True:
     game_mode = int(
         input(
@@ -286,12 +291,12 @@ while True:
             bot1 = Bot(difficulty)  # type: ignore
             print_board_2(board, player1, bot1)
             while True:
-                play(player1, bot1)
+                play(player1, bot1, difficulty)
                 if win:
                     break
                 print_board_2(board, player1, bot1)
                 input("Please press enter to continue ...")
-                play(bot1, player1)
+                play(bot1, player1, difficulty)
                 if win:
                     break
                 print_board_2(board, player1, bot1)
@@ -311,24 +316,27 @@ while True:
             player2 = Player(difficulty, players_color2)  # type: ignore
             print_board_2(board, player1, player2)
             while True:
-                play(player1, player2)
+                play(player1, player2, difficulty)
                 if win:
                     break
                 print_board_2(board, player1, player2)
-                play(player2, player1)
+                play(player2, player1, difficulty)
                 if win:
                     break
                 print_board_2(board, player1, player2)
         case _:
+            exit = True
             print("goodby")
             sleep(1)
             system("cls" if name == "nt" else "clear")
-    sleep(3)
-    restart = input("Do you want to play again?? (y/n) ")
-    if restart.lower() == "y":
-        win = False
-        continue
-        system("cls" if name == "nt" else "clear")
-        player1.clr_reset()
-    else:
-        break
+            break
+    if exit == False:
+        sleep(3)
+        restart = input("Do you want to play again?? (y/n) ")
+        if restart.lower() == "y":
+            win = False
+            system("cls" if name == "nt" else "clear")
+            player1.clr_reset()  # type: ignore
+            continue
+        else:
+            break
